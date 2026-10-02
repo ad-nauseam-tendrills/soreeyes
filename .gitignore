@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# Private, owner-only material. NEVER commit these.
+*.pdf
+private/
+private-assets/
+data/
+dist/

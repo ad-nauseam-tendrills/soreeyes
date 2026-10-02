@@ -1,8 +1,13 @@
 # Sore Eyes — Course Audit
 
 Verification document for the Sore Eyes curriculum data. Every row was checked
-against the four PDFs supplied by the owner. Instructions are **paraphrased
-reminders only** — no book text or exercise images are reproduced here or in the app.
+against the four PDFs supplied by the owner. This document contains only page
+references and paraphrased reminders — no book text or images.
+
+Sore Eyes is a private, single-user study tool. It displays and prints the owner's
+own exercise pages, rendered from the owner's PDFs into a private directory outside
+git and served only behind the owner login (see README → "Exercise sheets").
+Hidden keys are only shown after **Finish Attempt → Check My Work**.
 
 ## Source files and page numbering
 
@@ -237,7 +242,7 @@ To constrict, draw from Enlarged and check with Reduced; to dilate, the reverse.
 | ce-f3 | Final 3 | CEB p.52 | p.55 + p.56 | other version | ½ or 2× | ce-f2 | |
 | ce-f4 | Final 4 | CEB p.52 | p.57 + p.58 | other version | ½ or 2× | ce-f3 | CEB p.53 "A Final Word": keep practising starts. |
 
-**CE totals:** 34 exercises (3 First Steps · 6 Constriction · 6 Dilation · 4 CC I · 4 CD I · 2 CC II · 2 CD II · 4 Finals). No Minis, no supplement.
+**CE totals:** 31 exercises (3 First Steps · 6 Constriction · 6 Dilation · 4 CC I · 4 CD I · 2 CC II · 2 CD II · 4 Finals). No Minis, no supplement.
 CEB p.52 says "print all four Finals"; the app will show them in sequence but print both pages of each as you reach it.
 
 ---
@@ -259,11 +264,131 @@ CEB p.52 says "print all four Finals"; the app will show them in sequence but pr
 
 ---
 
-## Decisions I made where the books leave room (please confirm)
+## Decisions where the books leave room (adopted defaults; tunable in `src/lib/progress/engine.ts`)
 
-1. **Unlocking A Comparative Eye.** The books don't define a threshold. Proposed: CE unlocks when **all 31 AAE core exercises are Proficient** (Minis, supplementals and checkpoints not required). Alternative: unlock at the end of AAE Shape (Ex 26), since CE leans on position/distance/shape skills, not value.
+1. **Unlocking A Comparative Eye.** The books don't define a threshold. Proposed: CE unlocks when **all 31 AAE core exercises have reached Proficient** (Minis, supplementals and checkpoints not required). Alternative: unlock at the end of AAE Shape (Ex 26), since CE leans on position/distance/shape skills, not value.
 2. **Supplementals are optional.** They unlock when their core exercise is Proficient and appear nested under it, but never block the next core exercise. (SUP p.4 says finish the main chapter first — read strictly, that would mean Supp. 1a waits until Ex 7 is done. I chose "after its own core exercise" so they sit alongside, as you asked. Say if you'd rather follow the strict reading.)
 3. **Minis** become available when their section is reached, are never required, and carry the author's "hold off if you can" note.
 4. **Review-and-Test checkpoints** (AAE p.43, p.72) are not numbered exercises. Proposed: show them as optional checkpoint cards in the course map at their book position, recordable like an attempt but not gating. A "Needs Rework" result points you back to the remedial exercises the book names (p.43: restart at Ex 1; p.72: Ex 16, 20, 22).
 5. **Ex 13/14/15 and Ex 27/28 printing.** The book says to print the section's pages together; the Print Center will list the whole group at the first exercise and mark the later pages "already printed — keep".
 6. **"Proficient"** is not numerically defined by the books ("accurate more often than not", "most of the time"). Proposed default: Proficient after **2 of the last 3 attempts** rated Accurate/Mostly Accurate with the most recent one not Needs Rework. Mastered = Proficient + passing the 3, 7, 14 and 30-day reviews. All configurable in one place.
+
+---
+
+## Asset roles
+
+How each page is used by the app (`ExerciseSheets` in `src/lib/types.ts`):
+
+- **Instructional page** — cited only; the app shows a paraphrase.
+- **Display source** — shown on screen in the brief and during the attempt.
+- **Printable source / target** — included in *Print Required Sheets*.
+- **Key needed at setup** — the book uses the key before drawing (CE 4c onward and the Finals: mark top and bottom, then set it aside). Printed with the required sheets, never displayed on screen before checking.
+- **Hidden checking/key asset** — only rendered after *Finish Attempt → Check My Work*; never preloaded or included in a print job beforehand.
+- **Reused sheet** — printed for an earlier exercise; the Print Center tells you to keep it.
+
+For An Accurate Eye and the Supplement there are no hidden keys: the source itself is the
+checking reference (lay your tracing or target over it), so it stays visible as the book requires.
+Finals: constricting draws from *Enlarged* and checks with *Reduced*; dilating is the reverse.
+
+<!-- asset-roles:start -->
+
+_Generated from `src/content/course-data.ts` — do not edit by hand (`npm run audit:roles`)._
+
+| ID | Exercise | Instructional pages | Display source (on screen before/during attempt) | Printable source | Printable target | Key needed at setup (printed, never shown early) | Hidden checking/key asset (after Finish → Check My Work) | Reused previously printed sheet |
+|---|---|---|---|---|---|---|---|---|
+| aae-01 | Exercise 1 | AAE pp.18, 20–21 | AAE p.19 | AAE p.19 | — | — | — | — |
+| sup-1a | Supplemental 1a | Supplement pp.4, 6 | Supplement p.7 | Supplement p.7 | — | — | — | — |
+| sup-1b | Supplemental 1b | Supplement pp.4, 6 | Supplement p.8 | Supplement p.8 | — | — | — | — |
+| sup-1c | Supplemental 1c | Supplement pp.4, 6 | Supplement p.9 | Supplement p.9 | — | — | — | — |
+| aae-02 | Exercise 2 | AAE p.20 | AAE p.22 | AAE p.22 | — | — | — | — |
+| sup-2a | Supplemental 2a | Supplement pp.4, 6 | Supplement p.10 | Supplement p.10 | — | — | — | — |
+| sup-2b | Supplemental 2b | Supplement pp.4, 6 | Supplement p.11 | Supplement p.11 | — | — | — | — |
+| sup-2c | Supplemental 2c | Supplement pp.4, 6 | Supplement p.12 | Supplement p.12 | — | — | — | — |
+| aae-03 | Exercise 3 | AAE p.20 | AAE p.23 | AAE p.23 | — | — | — | — |
+| sup-3a | Supplemental 3a | Supplement pp.4, 6 | Supplement p.13 | Supplement p.13 | Supplement p.14 | — | — | — |
+| sup-3b | Supplemental 3b | Supplement pp.4, 6 | Supplement p.15 | Supplement p.15 | Supplement p.16 | — | — | — |
+| aae-04 | Exercise 4 | AAE p.20 | AAE p.24 | AAE p.24 | — | — | — | — |
+| sup-4a | Supplemental 4a | Supplement pp.4, 6 | Supplement p.17 | Supplement p.17 | Supplement p.18 | — | — | — |
+| sup-4b | Supplemental 4b | Supplement pp.4, 6 | Supplement p.19 | Supplement p.19 | Supplement p.20 | — | — | — |
+| aae-05 | Exercise 5 | AAE pp.25–27 | AAE p.28 | AAE p.28 | — | — | — | — |
+| sup-5a | Supplemental 5a | Supplement pp.4, 6 | Supplement p.21 | Supplement p.21 | Supplement p.22 | — | — | — |
+| sup-5b | Supplemental 5b | Supplement pp.4, 6 | Supplement p.23 | Supplement p.23 | Supplement p.24 | — | — | — |
+| aae-06 | Exercise 6 | AAE pp.25–27 | AAE p.29 | AAE p.29 | — | — | — | — |
+| sup-6a | Supplemental 6a | Supplement pp.4, 6 | Supplement p.25 | Supplement p.25 | Supplement p.26 | — | — | — |
+| sup-6b | Supplemental 6b | Supplement pp.4, 6 | Supplement p.27 | Supplement p.27 | Supplement p.28 | — | — | — |
+| aae-07 | Exercise 7 | AAE pp.25–27 | AAE p.30 | AAE p.30 | — | — | — | — |
+| sup-7a | Supplemental 7a | Supplement pp.4, 6 | Supplement p.29 | Supplement p.29 | Supplement p.30 | — | — | — |
+| mini-1 | Sight-Size Mini #1 | AAE pp.31–35 | AAE p.35 | — | — | — | — | — |
+| aae-08 | Exercise 8 | AAE pp.36–37 | AAE p.38 | AAE p.38 | — | — | — | — |
+| sup-8a | Supplemental 8a | Supplement pp.4, 6 | Supplement p.31 | Supplement p.31 | Supplement p.32 | — | — | — |
+| sup-8b | Supplemental 8b | Supplement pp.4, 6 | Supplement p.33 | Supplement p.33 | Supplement p.34 | — | — | — |
+| aae-09 | Exercise 9 | AAE p.37 | AAE p.39 | AAE p.39 | — | — | — | — |
+| sup-9a | Supplemental 9a | Supplement pp.4, 6 | Supplement p.35 | Supplement p.35 | Supplement p.36 | — | — | — |
+| aae-10 | Exercise 10 | AAE p.37 | AAE p.40 | AAE p.40 | — | — | — | — |
+| sup-10a | Supplemental 10a | Supplement pp.4, 6 | Supplement p.37 | Supplement p.37 | Supplement p.38 | — | — | — |
+| aae-11 | Exercise 11 | AAE p.37 | AAE p.41 | AAE p.41 | — | — | — | — |
+| sup-11a | Supplemental 11a | Supplement pp.4, 6 | Supplement p.39 | Supplement p.39 | Supplement p.40 | — | — | — |
+| aae-12 | Exercise 12 | AAE p.37 | AAE p.42 | AAE p.42 | — | — | — | — |
+| sup-12a | Supplemental 12a | Supplement pp.4, 6 | Supplement p.41 | Supplement p.41 | Supplement p.42 | — | — | — |
+| check-1 | Review and Test | AAE p.43 | — | — | — | — | — | — |
+| mini-2 | Sight-Size Mini #2 | AAE pp.44–45 | AAE p.45 | — | — | — | — | — |
+| aae-13 | Exercise 13 | AAE p.46 | AAE p.47 | AAE p.47 | — | — | — | — |
+| aae-14 | Exercise 14 | AAE p.46 | AAE p.48 | AAE p.48 | — | — | — | — |
+| aae-15 | Exercise 15 | AAE p.46 | AAE p.49 | AAE p.49 | — | — | — | — |
+| aae-16 | Exercise 16 | AAE pp.50–52 | AAE pp.51, 53 | AAE p.53 | — | — | — | — |
+| aae-17 | Exercise 17 | AAE pp.50–52 | AAE p.54 | AAE p.54 | — | — | — | — |
+| aae-18 | Exercise 18 | AAE p.55 | AAE p.56 | AAE p.56 | — | — | — | — |
+| aae-19 | Exercise 19 | AAE p.55 | AAE p.57 | AAE p.57 | — | — | — | — |
+| aae-20 | Exercise 20 | AAE p.55 | AAE p.58 | AAE p.58 | — | — | — | — |
+| mini-3 | Sight-Size Mini #3 | AAE pp.59–60 | AAE p.60 | — | — | — | — | — |
+| aae-21 | Exercise 21 | AAE pp.61–62 | AAE p.63 | AAE p.63 | — | — | — | — |
+| aae-22 | Exercise 22 | AAE pp.61–62 | AAE p.64 | AAE p.64 | — | — | — | — |
+| aae-23 | Exercise 23 | AAE pp.61–62 | AAE p.65 | AAE p.65 | — | — | — | — |
+| aae-24 | Exercise 24 | AAE pp.61–62 | AAE p.66 | AAE p.66 | — | — | — | — |
+| aae-25 | Exercise 25 | AAE pp.67–69 | AAE p.70 | AAE p.70 | — | — | — | — |
+| aae-26 | Exercise 26 | AAE pp.67–69 | AAE p.71 | AAE p.71 | — | — | — | — |
+| check-2 | Review and Test | AAE p.72 | — | — | — | — | — | AAE p.53 ← Exercise 16; AAE p.58 ← Exercise 20; AAE p.64 ← Exercise 22 |
+| mini-4 | Sight-Size Mini #4 | AAE pp.73–74 | AAE p.74 | — | — | — | — | — |
+| aae-27 | Exercise 27 | AAE pp.75–79 | AAE p.80 | AAE p.80 | — | — | — | — |
+| aae-28 | Exercise 28 | AAE pp.75–79 | AAE p.81 | AAE p.81 | — | — | — | — |
+| aae-29 | Exercise 29 | AAE p.82 | AAE p.83 | AAE p.83 | — | — | — | — |
+| aae-30 | Exercise 30 | AAE p.84 | AAE p.85 | AAE p.85 | — | — | — | — |
+| aae-31 | Exercise 31 | AAE p.84 | AAE p.86 | AAE p.86 | — | — | — | — |
+| mini-5 | Sight-Size Mini #5 | AAE pp.87–88 | AAE p.88 | — | — | — | — | — |
+| ce-1a | Exercise 1a | Course Book p.22 | Workbook p.4 | Workbook p.4 | — | — | Workbook p.5 | — |
+| ce-1b | Exercise 1b | Course Book p.23 | Workbook p.4 | — | — | — | Workbook p.6 | Workbook p.4 ← Exercise 1a |
+| ce-1c | Exercise 1c | Course Book p.24 | Workbook p.7 | Workbook p.7 | — | — | Workbook p.8 | — |
+| ce-2a | Exercise 2a | Course Book pp.25–26 | Workbook p.9 | Workbook p.9 | — | — | Workbook p.10 | — |
+| ce-2b | Exercise 2b | Course Book p.27 | Workbook p.11 | Workbook p.11 | — | — | Workbook p.12 | — |
+| ce-2c | Exercise 2c | Course Book p.28 | Workbook p.13 | Workbook p.13 | — | — | Workbook p.14 | — |
+| ce-2d | Exercise 2d | Course Book p.29 | Workbook p.9 | — | — | — | Workbook p.15 | Workbook p.9 ← Exercise 2a |
+| ce-2e | Exercise 2e | Course Book p.29 | Workbook p.11 | — | — | — | Workbook p.16 | Workbook p.11 ← Exercise 2b |
+| ce-2f | Exercise 2f | Course Book p.29 | Workbook p.13 | — | — | — | Workbook p.17 | Workbook p.13 ← Exercise 2c |
+| ce-3a | Exercise 3a | Course Book pp.30–31 | Workbook p.18 | Workbook p.18 | — | — | Workbook p.19 | — |
+| ce-3b | Exercise 3b | Course Book p.32 | Workbook p.20 | Workbook p.20 | — | — | Workbook p.21 | — |
+| ce-3c | Exercise 3c | Course Book p.33 | Workbook p.22 | Workbook p.22 | — | — | Workbook p.23 | — |
+| ce-3d | Exercise 3d | Course Book p.34 | Workbook p.18 | — | — | — | Workbook p.24 | Workbook p.18 ← Exercise 3a |
+| ce-3e | Exercise 3e | Course Book p.34 | Workbook p.20 | — | — | — | Workbook p.25 | Workbook p.20 ← Exercise 3b |
+| ce-3f | Exercise 3f | Course Book p.34 | Workbook p.22 | — | — | — | Workbook p.26 | Workbook p.22 ← Exercise 3c |
+| ce-4a | Exercise 4a | Course Book pp.35–36 | Workbook p.27 | Workbook p.27 | — | — | Workbook p.28 | — |
+| ce-4b | Exercise 4b | Course Book p.37 | Workbook p.29 | Workbook p.29 | — | — | Workbook p.30 | — |
+| ce-4c | Exercise 4c | Course Book p.38 | Workbook p.31 | Workbook p.31 | — | Workbook p.32 | Workbook p.32 | — |
+| ce-4d | Exercise 4d | Course Book p.39 | Workbook p.33 | Workbook p.33 | — | Workbook p.34 | Workbook p.34 | — |
+| ce-5a | Exercise 5a | Course Book p.40 | Workbook p.35 | Workbook p.35 | — | — | Workbook p.36 | — |
+| ce-5b | Exercise 5b | Course Book p.41 | Workbook p.37 | Workbook p.37 | — | Workbook p.38 | Workbook p.38 | — |
+| ce-5c | Exercise 5c | Course Book p.42 | Workbook p.39 | Workbook p.39 | — | Workbook p.40 | Workbook p.40 | — |
+| ce-5d | Exercise 5d | Course Book p.43 | Workbook p.41 | Workbook p.41 | — | Workbook p.42 | Workbook p.42 | — |
+| ce-6a | Exercise 6a | Course Book pp.44–46 | Workbook p.43; Course Book p.45 | Workbook p.43 | — | Workbook p.44 | Workbook p.44 | — |
+| ce-6b | Exercise 6b | Course Book p.47 | Workbook p.45 | Workbook p.45 | — | Workbook p.46 | Workbook p.46 | — |
+| ce-7a | Exercise 7a | Course Book pp.48–50 | Workbook p.47; Course Book p.50 | Workbook p.47 | — | Workbook p.48 | Workbook p.48 | — |
+| ce-7b | Exercise 7b | Course Book p.51 | Workbook p.49; Course Book p.50 | Workbook p.49 | — | Workbook p.50 | Workbook p.50 | — |
+| ce-f1 (constrict) | Final 1 | Course Book p.52 | Workbook p.52 | Workbook p.52 | — | Workbook p.51 | Workbook p.51 | — |
+| ce-f1 (dilate) | Final 1 | Course Book p.52 | Workbook p.51 | Workbook p.51 | — | Workbook p.52 | Workbook p.52 | — |
+| ce-f2 (constrict) | Final 2 | Course Book p.52 | Workbook p.54 | Workbook p.54 | — | Workbook p.53 | Workbook p.53 | — |
+| ce-f2 (dilate) | Final 2 | Course Book p.52 | Workbook p.53 | Workbook p.53 | — | Workbook p.54 | Workbook p.54 | — |
+| ce-f3 (constrict) | Final 3 | Course Book p.52 | Workbook p.56 | Workbook p.56 | — | Workbook p.55 | Workbook p.55 | — |
+| ce-f3 (dilate) | Final 3 | Course Book p.52 | Workbook p.55 | Workbook p.55 | — | Workbook p.56 | Workbook p.56 | — |
+| ce-f4 (constrict) | Final 4 | Course Book p.52 | Workbook p.58 | Workbook p.58 | — | Workbook p.57 | Workbook p.57 | — |
+| ce-f4 (dilate) | Final 4 | Course Book p.52 | Workbook p.57 | Workbook p.57 | — | Workbook p.58 | Workbook p.58 | — |
+
+<!-- asset-roles:end -->

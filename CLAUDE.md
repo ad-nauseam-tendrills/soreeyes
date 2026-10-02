@@ -1,0 +1,25 @@
+# Sore Eyes — notes for Claude
+
+A private, single-user Next.js app (separate from the ArtBench HTML file in the repo root).
+Read `README.md`, `COURSE_AUDIT.md` and `DEPLOY.md` first.
+
+## Hard rules
+
+- **Never commit the PDFs or any extracted page images/PDFs.** They live in `ASSETS_DIR`
+  (gitignored `private-assets/`) and are served only through owner-authenticated routes. Don't add
+  a `public/` directory with course material, and don't use `next/image` for exercise sheets
+  (its optimizer route would bypass the asset allow-list).
+- **Hidden keys stay hidden** until Finish Attempt → Check My Work: don't render, preload or
+  include them in a print job. Setup keys (CE 4c onward and the Finals) are printed but never displayed early.
+- **Don't import `src/content/*` from client components.** It would ship course data in public
+  JS bundles. Pass serializable props instead (see `PracticeFlow`, `lib/print-href.ts`).
+- Page references come from `COURSE_AUDIT.md`. After changing any sheet reference, run
+  `npm run manifest` and `npm run audit:roles`, then `npm test`.
+- Progress is always derived from the attempt log (`lib/progress/engine.ts`). Don't store
+  derived states.
+- No gamification: no confetti, no "streak lost", no red alarm states. Rework language stays encouraging.
+
+## Before calling a change done
+
+`npm test && npm run typecheck && npm run build`. Bump `APP_VERSION` in `src/lib/version.ts` for
+every deploy. The owner deploys by `scp`; Claude never needs or asks for server credentials.
