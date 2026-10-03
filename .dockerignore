@@ -1,0 +1,11 @@
+node_modules
+.next
+dist
+data
+private-assets
+private
+*.pdf
+.env
+.env.*
+!.env.example
+.git

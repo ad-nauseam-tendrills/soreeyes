@@ -1,6 +1,6 @@
-node_modules/
-.next/
-out/
+/node_modules/
+/.next/
+/out/
 next-env.d.ts
 *.tsbuildinfo
 .env
@@ -8,8 +8,9 @@ next-env.d.ts
 !.env.example
 
 # Private, owner-only material. NEVER commit these.
+# Anchored to the repo root so they never match source folders (e.g. src/app/data).
 *.pdf
-private/
-private-assets/
-data/
-dist/
+/private/
+/private-assets/
+/data/
+/dist/

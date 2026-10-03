@@ -22,4 +22,6 @@ Read `README.md`, `COURSE_AUDIT.md` and `DEPLOY.md` first.
 ## Before calling a change done
 
 `npm test && npm run typecheck && npm run build`. Bump `APP_VERSION` in `src/lib/version.ts` for
-every deploy. The owner deploys by `scp`; Claude never needs or asks for server credentials.
+every deploy. The owner deploys on the droplet with `git pull && docker compose up -d --build`; Claude never needs or asks for server credentials.
+
+The droplet also runs other Docker apps (ports 3000, 3001, 3210, 5432, 8000) behind host nginx — keep Sore Eyes on 127.0.0.1:3100 and within its memory cap.

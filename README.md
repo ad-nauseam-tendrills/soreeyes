@@ -27,7 +27,7 @@ npm run dev                      # http://localhost:3100
 | `npm test` | Vitest: course data integrity, prerequisites, unlocking, review scheduling, rework and mastery transitions, progress, journal, print plan, export/import, sessions |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run build` | production build (standalone server) |
-| `npm run package` | tests + build + `dist/sore-eyes.tar.gz` for the droplet |
+| `docker compose up -d --build` | on the droplet: test, build and (re)start the container (see DEPLOY.md) |
 | `npm run manifest` | regenerate `src/content/asset-manifest.json` after changing page references |
 | `npm run audit:roles` | regenerate the Asset roles table in `COURSE_AUDIT.md` |
 

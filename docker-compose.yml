@@ -1,0 +1,28 @@
+# Sore Eyes — same pattern as the other apps on the droplet:
+# bound to localhost only; host nginx proxies soreeyes.edgarbustos.art → 127.0.0.1:3100.
+services:
+  soreeyes:
+    build: .
+    image: soreeyes:latest
+    container_name: soreeyes
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3100:3000"
+    # Secrets live outside the repo (see deploy/soreeyes.env.example).
+    env_file: /etc/soreeyes.env
+    environment:
+      DATA_DIR: /data
+      ASSETS_DIR: /assets
+    volumes:
+      - /var/lib/soreeyes/data:/data # progress, backups, photos (read/write)
+      - /var/lib/soreeyes/assets:/assets:ro # extracted exercise pages (read-only)
+    # Small droplet: keep Sore Eyes from crowding the other apps.
+    mem_limit: 384m
+    cpus: 0.5
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"

@@ -11,7 +11,6 @@
     "test": "vitest run",
     "extract-assets": "node scripts/extract-assets.mjs",
     "hash-password": "node scripts/hash-password.mjs",
-    "package": "bash scripts/package.sh",
     "manifest": "UPDATE_MANIFEST=1 vitest run tests/manifest.test.ts",
     "audit:roles": "UPDATE_AUDIT=1 vitest run tests/audit-asset-roles.test.ts"
   },

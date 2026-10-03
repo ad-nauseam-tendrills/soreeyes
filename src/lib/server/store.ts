@@ -39,7 +39,8 @@ let queue: Promise<unknown> = Promise.resolve();
 export function mutateState(fn: (s: AppState) => AppState | void): Promise<AppState> {
   const run = queue.then(async () => {
     const current = await readState();
-    const next = fn(structuredClone(current)) ?? current;
+    const draft = structuredClone(current);
+    const next = fn(draft) ?? draft; // in-place edits land on the draft, never the original
     await writeState(next, current);
     return next;
   });
