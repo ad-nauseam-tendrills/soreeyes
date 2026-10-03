@@ -38,7 +38,7 @@ sudo chmod 750 /var/lib/soreeyes /var/lib/soreeyes/data /var/lib/soreeyes/assets
 
 ### Secrets (`/etc/soreeyes.env`)
 
-On your **Mac**, in `sore-eyes/`:
+On your **Mac**, in your clone of this repo (`git clone git@github.com:ad-nauseam-tendrills/soreeyes.git`):
 
 ```bash
 npm ci
@@ -81,7 +81,7 @@ don't need to be on the server.
 
 ```bash
 brew install poppler           # provides pdftoppm
-cd sore-eyes
+cd soreeyes
 npm run extract-assets -- \
   --aae "~/Books/An_Accurate_Eye.pdf" \
   --sup "~/Books/An_Accurate_Eye-Supplement.pdf" \
@@ -102,7 +102,7 @@ app tells you if any page file is missing.
 On your Mac:
 
 ```bash
-cd sore-eyes
+cd soreeyes
 # bump APP_VERSION in src/lib/version.ts
 npm run package                # tests + build + dist/sore-eyes.tar.gz (refuses to include private files)
 scp dist/sore-eyes.tar.gz droplet:/tmp/

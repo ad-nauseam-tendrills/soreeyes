@@ -1,6 +1,6 @@
 # Sore Eyes — notes for Claude
 
-A private, single-user Next.js app (separate from the ArtBench HTML file in the repo root).
+A private, single-user Next.js app (repo: ad-nauseam-tendrills/soreeyes; it shares a droplet with ArtBench but nothing else).
 Read `README.md`, `COURSE_AUDIT.md` and `DEPLOY.md` first.
 
 ## Hard rules
