@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { computeProgress, todayPlan } from "@/lib/progress/engine";
 import { printPlan } from "@/lib/progress/print";
-import { createSessionToken, verifySessionToken } from "@/lib/session";
 import { aaeAllProficient, at, mk } from "./helpers";
 
 describe("print center", () => {
@@ -24,18 +23,5 @@ describe("print center", () => {
     expect(cur.hasHiddenKey).toBe(true);
     expect(pp.keep.map((k) => k.sheet.page)).toEqual([9]);
     expect(pp.keep[0].reusedBy.map((e) => e.id)).toEqual(["ce-2d"]);
-  });
-});
-
-describe("session tokens", () => {
-  const secret = "x".repeat(40);
-  it("verifies its own tokens and rejects tampering, expiry and wrong secrets", async () => {
-    const t = await createSessionToken(secret, 1_000);
-    expect(await verifySessionToken(t, secret, 2_000)).toBe(true);
-    expect(await verifySessionToken(t, "y".repeat(40), 2_000)).toBe(false);
-    expect(await verifySessionToken(t.replace(/^\d+/, "9999999999999"), secret, 2_000)).toBe(false);
-    expect(await verifySessionToken(t, secret, 1_000 + 31 * 86_400_000)).toBe(false);
-    expect(await verifySessionToken(undefined, secret)).toBe(false);
-    expect(await verifySessionToken(t, null)).toBe(false);
   });
 });

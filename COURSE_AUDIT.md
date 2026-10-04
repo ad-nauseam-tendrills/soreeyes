@@ -6,7 +6,7 @@ references and paraphrased reminders — no book text or images.
 
 Sore Eyes is a private, single-user study tool. It displays and prints the owner's
 own exercise pages, rendered from the owner's PDFs into a private directory outside
-git and served only behind the owner login (see README → "Exercise sheets").
+git and served only through allow-listed routes (see README → "Exercise sheets").
 Hidden keys are only shown after **Finish Attempt → Check My Work**.
 
 ## Source files and page numbering

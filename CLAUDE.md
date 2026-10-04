@@ -6,7 +6,7 @@ Read `README.md`, `COURSE_AUDIT.md` and `DEPLOY.md` first.
 ## Hard rules
 
 - **Never commit the PDFs or any extracted page images/PDFs.** They live in `ASSETS_DIR`
-  (gitignored `private-assets/`) and are served only through owner-authenticated routes. Don't add
+  (gitignored `private-assets/`) and are served only through the allow-listed `/api/asset` and `/api/print` routes. Don't add
   a `public/` directory with course material, and don't use `next/image` for exercise sheets
   (its optimizer route would bypass the asset allow-list).
 - **Hidden keys stay hidden** until Finish Attempt → Check My Work: don't render, preload or
@@ -17,6 +17,7 @@ Read `README.md`, `COURSE_AUDIT.md` and `DEPLOY.md` first.
   `npm run manifest` and `npm run audit:roles`, then `npm test`.
 - Progress is always derived from the attempt log (`lib/progress/engine.ts`). Don't store
   derived states.
+- **No login**, by the owner's explicit choice. Don't reintroduce authentication unless asked.
 - No gamification: no confetti, no "streak lost", no red alarm states. Rework language stays encouraging.
 
 ## Before calling a change done

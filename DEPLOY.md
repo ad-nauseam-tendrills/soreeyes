@@ -9,7 +9,6 @@ browser ──https──▶ host nginx (soreeyes.edgarbustos.art) ──▶ 127
                                                                    │
                          /var/lib/soreeyes/data    → /data   (progress, backups, photos — read/write)
                          /var/lib/soreeyes/assets  → /assets (your extracted exercise pages — read-only)
-                         /etc/soreeyes.env                   (password hash, session secret — not in git)
 ```
 
 Ports already used on the droplet: 3000, 3001, 3210, 5432, 8000. Sore Eyes uses **3100**.
@@ -44,7 +43,7 @@ fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /
 echo '/swapfile none swap sw 0 0' >> /etc/fstab
 ```
 
-### Code, folders, secrets
+### Code and folders
 
 ```bash
 cd /root
@@ -52,17 +51,10 @@ git clone https://github.com/ad-nauseam-tendrills/soreeyes.git   # private: use 
 mkdir -p /var/lib/soreeyes/data /var/lib/soreeyes/assets
 chown -R 1000:1000 /var/lib/soreeyes          # the container runs as the unprivileged "node" user (uid 1000)
 chmod 750 /var/lib/soreeyes
-
-cd /root/soreeyes
-node scripts/hash-password.mjs                # prompts; prints OWNER_PASSWORD_HASH='scrypt:…' (host Node 18 is fine for this)
-openssl rand -base64 48                       # → SESSION_SECRET
-cp deploy/soreeyes.env.example /etc/soreeyes.env
-nano /etc/soreeyes.env                        # paste both values; set APP_TIMEZONE
-chmod 600 /etc/soreeyes.env
 ```
 
-To change the password later, put a new hash in `/etc/soreeyes.env` and run
-`docker compose up -d` in `/root/soreeyes`. To sign out every device, change `SESSION_SECRET`.
+There's no login and nothing secret to configure. The only setting is the time zone used for
+"today" and review dates: `APP_TIMEZONE` in `docker-compose.yml` (default `America/Los_Angeles`).
 
 ### nginx + HTTPS
 
@@ -128,17 +120,19 @@ Use **Data → Export Progress** now and then, or from your Mac:
 cd /root/soreeyes && docker compose down && docker image rm soreeyes:latest
 rm /etc/nginx/sites-enabled/soreeyes /etc/nginx/sites-available/soreeyes && systemctl reload nginx
 certbot delete --cert-name soreeyes.edgarbustos.art
-rm -rf /var/lib/soreeyes/assets /root/soreeyes /etc/soreeyes.env   # keep or archive /var/lib/soreeyes/data
+rm -rf /var/lib/soreeyes/assets /root/soreeyes   # keep or archive /var/lib/soreeyes/data
 ```
 
 Then remove the `soreeyes` DNS record.
 
-## Security checklist
+## Access
+
+**There is no login** (owner's choice). Anyone who reaches `soreeyes.edgarbustos.art` can view the
+exercise pages and change or delete progress. What still applies:
 
 - The container port is bound to `127.0.0.1` only; the internet reaches it solely through nginx + HTTPS.
-- Every route (pages, `/api/asset/*`, `/api/print`, `/api/photo/*`, `/api/export`) requires the
-  owner session cookie (HttpOnly, Secure, SameSite=Lax, 30 days). Only `/login` is public.
 - No `/pdfs/`, `/exercises/` or `public/` directory exists; nginx serves no files itself.
 - Asset ids are checked against an allow-list generated from the course data (130 pages). Pages are mounted read-only.
 - The image contains no progress data, PDFs or extracted pages, and runs as a non-root user with `no-new-privileges`.
-- Login is throttled (5 failures → 10 minutes). `robots.txt` disallows everything, and responses carry `X-Robots-Tag: noindex`.
+- `robots.txt` disallows everything, and every response carries `X-Robots-Tag: noindex`.
+- Every change keeps a backup (`/var/lib/soreeyes/data/backups`), so an unwanted edit or import can be undone.

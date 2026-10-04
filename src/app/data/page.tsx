@@ -81,14 +81,6 @@ export default async function DataPage() {
           </p>
         )}
       </section>
-
-      <section>
-        <form method="post" action="/api/logout">
-          <button className="btn btn-quiet" type="submit">
-            Sign out
-          </button>
-        </form>
-      </section>
     </div>
   );
 }

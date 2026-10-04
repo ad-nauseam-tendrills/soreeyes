@@ -26,5 +26,5 @@ COPY --from=build --chown=node:node /app/.next/static ./.next/static
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=60s --timeout=5s --start-period=20s \
-  CMD wget -q -O /dev/null http://127.0.0.1:3000/login || exit 1
+  CMD wget -q -O /dev/null http://127.0.0.1:3000/robots.txt || exit 1
 CMD ["node", "server.js"]

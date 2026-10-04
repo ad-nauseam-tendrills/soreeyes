@@ -1,6 +1,5 @@
 import "server-only";
 import { computeProgress, todayPlan } from "@/lib/progress/engine";
-import { requireOwner } from "@/lib/server/auth";
 import { readState } from "@/lib/server/store";
 
 export function appTimeZone(): string {
@@ -13,9 +12,8 @@ export function appTimeZone(): string {
   }
 }
 
-/** Everything a page needs: verified owner, state, derived progress and today's plan. */
+/** Everything a page needs: state, derived progress and today's plan. */
 export async function loadContext() {
-  await requireOwner();
   const now = new Date();
   const state = await readState();
   const progress = computeProgress(state.attempts, now);

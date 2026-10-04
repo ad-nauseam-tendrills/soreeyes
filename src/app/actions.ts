@@ -8,7 +8,6 @@ import { MATERIALS_BY_ID } from "@/content/materials";
 import { STATUS_LABELS } from "@/lib/labels";
 import { AttemptSchema, validateImport } from "@/lib/portability";
 import { computeProgress } from "@/lib/progress/engine";
-import { requireOwner } from "@/lib/server/auth";
 import { deletePhoto, mutateState, readState, replaceState, savePhoto } from "@/lib/server/store";
 import type { Attempt, ExerciseStatus } from "@/lib/types";
 
@@ -19,7 +18,6 @@ export type SaveAttemptResult =
   | { ok: false; error: string };
 
 export async function saveAttempt(form: FormData): Promise<SaveAttemptResult> {
-  await requireOwner();
   const exerciseId = String(form.get("exerciseId") ?? "");
   const exercise = getExercise(exerciseId);
   if (!exercise) return { ok: false, error: "Unknown exercise." };
@@ -60,7 +58,6 @@ export async function saveAttempt(form: FormData): Promise<SaveAttemptResult> {
 }
 
 export async function deleteAttempt(id: string): Promise<void> {
-  await requireOwner();
   let photoId: string | undefined;
   await mutateState((s) => {
     photoId = s.attempts.find((a) => a.id === id)?.photoId;
@@ -71,7 +68,6 @@ export async function deleteAttempt(id: string): Promise<void> {
 }
 
 export async function setPrinted(ids: string[], printed: boolean): Promise<void> {
-  await requireOwner();
   const valid = ids.filter((id) => ALLOWED_ASSETS.has(id));
   const today = new Date().toISOString();
   await mutateState((s) => {
@@ -84,7 +80,6 @@ export async function setPrinted(ids: string[], printed: boolean): Promise<void>
 }
 
 export async function setMaterialOwned(id: string, owned: boolean): Promise<void> {
-  await requireOwner();
   if (!MATERIALS_BY_ID.has(id)) return;
   await mutateState((s) => {
     s.materialsOwned[id] = owned;
@@ -93,7 +88,6 @@ export async function setMaterialOwned(id: string, owned: boolean): Promise<void
 }
 
 export async function updateSettings(form: FormData): Promise<void> {
-  await requireOwner();
   const reviewCap = Math.min(10, Math.max(0, Math.round(Number(form.get("reviewCap") ?? 2))));
   const showTimer = form.get("showTimer") === "on";
   await mutateState((s) => {
@@ -115,7 +109,6 @@ function parseJson(text: string): unknown {
 }
 
 export async function previewImport(text: string): Promise<ImportPreview> {
-  await requireOwner();
   const raw = parseJson(text);
   if (raw === undefined) return { ok: false, errors: ["The file isn't valid JSON."] };
   const result = validateImport(raw);
@@ -125,7 +118,6 @@ export async function previewImport(text: string): Promise<ImportPreview> {
 }
 
 export async function applyImport(text: string): Promise<ImportPreview> {
-  await requireOwner();
   const raw = parseJson(text);
   if (raw === undefined) return { ok: false, errors: ["The file isn't valid JSON."] };
   const result = validateImport(raw);

@@ -1,5 +1,4 @@
 import { PDFDocument } from "pdf-lib";
-import { isOwner } from "@/lib/server/auth";
 import { readAsset } from "@/lib/server/assets";
 import { ALLOWED_ASSETS } from "@/content/sheets";
 
@@ -9,7 +8,6 @@ import { ALLOWED_ASSETS } from "@/content/sheets";
  * the browser's PDF viewer can print them at 100% / Actual Size.
  */
 export async function GET(req: Request) {
-  if (!(await isOwner())) return new Response("Unauthorized", { status: 401 });
   const url = new URL(req.url);
   const ids = (url.searchParams.get("ids") ?? "").split(",").filter(Boolean);
   if (ids.length === 0 || ids.length > 12 || ids.some((id) => !ALLOWED_ASSETS.has(id))) {

@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { isOwner } from "@/lib/server/auth";
 import { APP_VERSION } from "@/lib/version";
 
 export const metadata: Metadata = {
@@ -27,16 +26,14 @@ const NAV = [
   { href: "/data", label: "Data" },
 ];
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const owner = await isOwner();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen">
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-card focus:px-3 focus:py-2">
           Skip to content
         </a>
-        {owner && (
-          <header className="no-print border-b border-rule">
+        <header className="no-print border-b border-rule">
             <div className="mx-auto flex max-w-5xl flex-wrap items-baseline justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
               <Link href="/" className="font-serif text-lg tracking-[0.2em] no-underline">
                 SORE EYES
@@ -50,7 +47,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </nav>
             </div>
           </header>
-        )}
         <main id="main" className="mx-auto max-w-5xl px-4 pb-24 pt-8 sm:px-6">
           {children}
         </main>
