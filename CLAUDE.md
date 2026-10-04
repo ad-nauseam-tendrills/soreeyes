@@ -17,7 +17,7 @@ Read `README.md`, `COURSE_AUDIT.md` and `DEPLOY.md` first.
   `npm run manifest` and `npm run audit:roles`, then `npm test`.
 - Progress is always derived from the attempt log (`lib/progress/engine.ts`). Don't store
   derived states.
-- **No login**, by the owner's explicit choice. Don't reintroduce authentication unless asked.
+- **No login**, by the owner's explicit choice: the site is restricted to the owner's IP by an ACL in front of it. Don't reintroduce authentication or warn about external access unless asked.
 - No gamification: no confetti, no "streak lost", no red alarm states. Rework language stays encouraging.
 
 ## Before calling a change done

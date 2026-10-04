@@ -48,7 +48,7 @@ npm run dev                      # http://localhost:3100
     Minis, supplementals and Review-and-Test checkpoints never block progress.
   - Today suggests the current exercise, at most 2 reviews (setting), anything needing rework,
     and occasionally one older skill from a different, already-learned section.
-- **Access** — no login, by choice. The site isn't linked anywhere and is marked noindex.
+- **Access** — no login; the site is restricted to the owner's IP by an ACL (and marked noindex).
 
 ## Exercise sheets (private)
 

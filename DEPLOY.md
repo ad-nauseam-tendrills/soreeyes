@@ -127,8 +127,9 @@ Then remove the `soreeyes` DNS record.
 
 ## Access
 
-**There is no login** (owner's choice). Anyone who reaches `soreeyes.edgarbustos.art` can view the
-exercise pages and change or delete progress. What still applies:
+**There is no login.** Access is restricted to the owner's IP address by an ACL in front of the
+site, which is what keeps the exercise pages and progress private. If that ACL is ever removed,
+anyone who reaches `soreeyes.edgarbustos.art` could view and change everything. What also applies:
 
 - The container port is bound to `127.0.0.1` only; the internet reaches it solely through nginx + HTTPS.
 - No `/pdfs/`, `/exercises/` or `public/` directory exists; nginx serves no files itself.
