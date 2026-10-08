@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SafeImage } from "@/components/MissingImage";
 
 export interface ReferenceOption {
   id: string;
@@ -15,8 +16,7 @@ export function ReferenceViewer({ option, size = "normal" }: { option: Reference
   const maxH = size === "tall" ? "max-h-[80vh]" : "max-h-[62vh]";
   return (
     <figure className="m-0">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <SafeImage
         src={option.src}
         alt={`Reference: ${option.label}`}
         className={`sheet-frame mx-auto block h-auto w-auto max-w-full ${maxH}`}

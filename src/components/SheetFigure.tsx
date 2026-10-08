@@ -1,3 +1,4 @@
+import { SafeImage } from "@/components/MissingImage";
 import { printHref, type SheetView } from "@/lib/print-href";
 
 /** One page rendered from the owner's own PDF, with its citation and actions. */
@@ -7,11 +8,10 @@ export function SheetFigure({ view, size = "normal" }: { view: SheetView; size?:
   return (
     <figure className="m-0">
       <a href={src} target="_blank" rel="noopener" className="block" aria-label={`Open ${view.label} full size`}>
-        {/* Plain <img>: owner-only asset route, never the public image optimizer. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        {/* Plain <img> (via SafeImage): allow-listed asset route, never the public image optimizer. */}
+        <SafeImage
           src={src}
-          alt={`${view.label} — page from the book`}
+          alt={view.label}
           loading="lazy"
           className={`sheet-frame mx-auto block h-auto w-auto max-w-full ${maxH}`}
         />
