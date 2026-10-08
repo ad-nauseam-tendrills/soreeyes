@@ -25,6 +25,18 @@ export const AttemptSchema = z
       .string()
       .regex(/^[a-z0-9-]{8,64}$/)
       .optional(),
+    referenceId: z
+      .string()
+      .regex(/^[a-z0-9-]{3,64}$/)
+      .optional(),
+  })
+  .strict();
+
+export const ReferenceImageSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9-]{8,64}$/),
+    name: z.string().min(1).max(120),
+    addedAt: isoDate,
   })
   .strict();
 
@@ -32,8 +44,10 @@ export const AppStateSchema = z
   .object({
     schemaVersion: z.literal(1),
     attempts: z.array(AttemptSchema),
-    printed: z.record(z.string().regex(/^(aae|sup|ceb|cew)-p\d{3}$/), isoDate),
+    printed: z.record(z.string().regex(/^(aae|sup|ceb|cew|lang|lref)-p\d{3}$/), isoDate),
     materialsOwned: z.record(z.string(), z.boolean()),
+    // Added after v1.2; older exports simply have none.
+    references: z.array(ReferenceImageSchema).default([]),
     settings: z
       .object({
         showTimer: z.boolean(),
@@ -49,6 +63,7 @@ export function emptyState(): AppState {
     attempts: [],
     printed: {},
     materialsOwned: {},
+    references: [],
     settings: { showTimer: true, reviewCap: 2 },
   };
 }

@@ -32,7 +32,10 @@ const dpi = Number(args.dpi || 150);
 
 const needed = new Map(); // book -> Set(page)
 for (const id of manifest.assets) {
-  const [, book, page] = /^(aae|sup|ceb|cew)-p(\d{3})$/.exec(id);
+  // Image sets (lang/lref) aren't in the PDFs — they're added separately (see DEPLOY.md).
+  const m = /^(aae|sup|ceb|cew)-p(\d{3})$/.exec(id);
+  if (!m) continue;
+  const [, book, page] = m;
   if (!needed.has(book)) needed.set(book, new Set());
   needed.get(book).add(Number(page));
 }

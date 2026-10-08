@@ -22,6 +22,7 @@ const NAV = [
   { href: "/journal", label: "Error Journal" },
   { href: "/history", label: "History" },
   { href: "/print", label: "Print Center" },
+  { href: "/references", label: "References" },
   { href: "/materials", label: "Materials" },
   { href: "/data", label: "Data" },
 ];

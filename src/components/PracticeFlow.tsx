@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { saveAttempt, setPrinted } from "@/app/actions";
 import { PrintScaleNote, SheetFigure } from "@/components/SheetFigure";
+import { ReferenceViewer, type ReferenceOption } from "@/components/ReferenceViewer";
+import { ValueKey } from "@/components/ValueKey";
 import { ERROR_GROUPS, ERROR_LABELS, RATING_LABELS } from "@/lib/labels";
 import { printHref, type SheetView } from "@/lib/print-href";
 import type { ErrorCategory, ExerciseStatus, ExerciseType, Rating, ScaleDirection } from "@/lib/types";
@@ -52,6 +54,8 @@ export interface PracticeProps {
   showTimer: boolean;
   parent?: { id: string; label: string };
   supplementals: { id: string; label: string; status: string; locked: boolean }[];
+  /** Reference-photo drills (Portrait Value): choices and the value-key levels. */
+  reference?: { options: ReferenceOption[]; keyLevels: 2 | 3 };
 }
 
 type Stage = "brief" | "attempt" | "check" | "saved";
@@ -64,6 +68,7 @@ interface Draft {
   finishedAt?: string;
   revealed: boolean;
   direction?: ScaleDirection;
+  referenceId?: string;
 }
 
 const draftKey = (id: string) => `sore-eyes:draft:${id}`;
@@ -101,6 +106,8 @@ export function PracticeFlow(props: PracticeProps) {
   const router = useRouter();
   const isFinal = Boolean(props.sheets.constrict);
   const [direction, setDirection] = useState<ScaleDirection>("constrict");
+  const [referenceId, setReferenceId] = useState<string | undefined>(props.reference?.options[0]?.id);
+  const reference = props.reference?.options.find((o) => o.id === referenceId) ?? props.reference?.options[0];
   const sheets = (isFinal ? props.sheets[direction] : props.sheets.default)!;
 
   const [stage, setStage] = useState<Stage>("brief");
@@ -125,13 +132,14 @@ export function PracticeFlow(props: PracticeProps) {
     setFinishedAt(d.finishedAt ?? "");
     setRevealed(d.revealed);
     if (d.direction) setDirection(d.direction);
+    if (d.referenceId) setReferenceId(d.referenceId);
   }, [props.exerciseId, props.locked]);
 
   useEffect(() => {
     if (stage === "attempt" || stage === "check") {
-      saveDraft(props.exerciseId, { stage, startedAt, accumulatedMs, runningSince, finishedAt, revealed, direction });
+      saveDraft(props.exerciseId, { stage, startedAt, accumulatedMs, runningSince, finishedAt, revealed, direction, referenceId });
     }
-  }, [props.exerciseId, stage, startedAt, accumulatedMs, runningSince, finishedAt, revealed, direction]);
+  }, [props.exerciseId, stage, startedAt, accumulatedMs, runningSince, finishedAt, revealed, direction, referenceId]);
 
   useEffect(() => {
     if (runningSince === null) return;
@@ -213,6 +221,8 @@ export function PracticeFlow(props: PracticeProps) {
           isFinal={isFinal}
           direction={direction}
           setDirection={setDirection}
+          referenceChoice={reference}
+          setReferenceId={setReferenceId}
           onStart={start}
         />
       )}
@@ -257,10 +267,24 @@ export function PracticeFlow(props: PracticeProps) {
 
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
             <div className="space-y-8">
-              {sheets.display.map((s) => (
-                <SheetFigure key={s.id} view={s} size="tall" />
-              ))}
-              {sheets.display.length === 0 && (
+              {reference ? (
+                <>
+                  <ReferenceViewer option={reference} size="tall" />
+                  {sheets.display.length > 0 && (
+                    <details className="border-t border-rule pt-3">
+                      <summary className="cursor-pointer text-sm text-graphite">Her demo stages for this drill</summary>
+                      <div className="mt-4 space-y-6">
+                        {sheets.display.map((s) => (
+                          <SheetFigure key={s.id} view={s} />
+                        ))}
+                      </div>
+                    </details>
+                  )}
+                </>
+              ) : (
+                sheets.display.map((s) => <SheetFigure key={s.id} view={s} size="tall" />)
+              )}
+              {sheets.display.length === 0 && !reference && (
                 <p className="text-graphite">Work from your setup — there&apos;s no printed sheet for this one.</p>
               )}
             </div>
@@ -286,6 +310,7 @@ export function PracticeFlow(props: PracticeProps) {
           sheets={sheets}
           isFinal={isFinal}
           direction={direction}
+          referenceChoice={reference}
           revealed={revealed}
           onReveal={() => setRevealed(true)}
           startedAt={startedAt}
@@ -328,6 +353,8 @@ function Brief(
     isFinal: boolean;
     direction: ScaleDirection;
     setDirection: (d: ScaleDirection) => void;
+    referenceChoice?: ReferenceOption;
+    setReferenceId: (id: string) => void;
     onStart: () => void;
   },
 ) {
@@ -350,6 +377,33 @@ function Brief(
             {props.minutes} · {props.courseTitle}
           </p>
         </section>
+
+        {props.reference && (
+          <section>
+            <h2 className="eyebrow">Reference</h2>
+            <label className="mt-2 block text-sm">
+              <span className="sr-only">Choose a reference photo</span>
+              <select
+                className="field"
+                value={props.referenceChoice?.id}
+                onChange={(e) => props.setReferenceId(e.target.value)}
+              >
+                {props.reference.options.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="mt-1 text-xs text-pencil">
+              Add your own on the{" "}
+              <Link className="link" href="/references">
+                References
+              </Link>{" "}
+              page. The value key for checking is made from whichever you choose.
+            </p>
+          </section>
+        )}
 
         {props.isFinal && (
           <fieldset>
@@ -525,11 +579,13 @@ function Brief(
       </div>
 
       <div className="space-y-8">
+        {props.referenceChoice && <ReferenceViewer option={props.referenceChoice} />}
+        {props.referenceChoice && sheets.display.length > 0 && <h2 className="eyebrow pt-4">Her demo stages</h2>}
         {sheets.display.map((s) => (
           <SheetFigure key={s.id} view={s} />
         ))}
         {sheets.required
-          .filter((r) => !sheets.display.some((d) => d.id === r.id))
+          .filter((r) => !sheets.display.some((d) => d.id === r.id) && !(props.reference && r.id.startsWith("lref-")))
           .map((s) => (
             <SheetFigure key={s.id} view={s} size="thumb" />
           ))}
@@ -557,6 +613,7 @@ function CheckAndRate(
     sheets: ResolvedSheetViews;
     isFinal: boolean;
     direction: ScaleDirection;
+    referenceChoice?: ReferenceOption;
     revealed: boolean;
     onReveal: () => void;
     startedAt: string;
@@ -566,7 +623,7 @@ function CheckAndRate(
   },
 ) {
   const { sheets } = props;
-  const hasKey = sheets.checkKeys.length > 0;
+  const hasKey = sheets.checkKeys.length > 0 || Boolean(props.referenceChoice);
   const [rating, setRating] = useState<Rating | null>(null);
   const [errors, setErrors] = useState<Set<ErrorCategory>>(new Set());
   const [notes, setNotes] = useState("");
@@ -602,6 +659,7 @@ function CheckAndRate(
     errors.forEach((c) => fd.append("errors", c));
     fd.set("notes", notes);
     if (props.isFinal) fd.set("direction", props.direction);
+    if (props.referenceChoice) fd.set("referenceId", props.referenceChoice.id);
     if (photo) fd.set("photo", new File([photo], "attempt.jpg", { type: "image/jpeg" }));
     startTransition(async () => {
       const res = await saveAttempt(fd);
@@ -628,10 +686,14 @@ function CheckAndRate(
 
         {hasKey && !props.revealed && (
           <button type="button" className="btn btn-primary" onClick={props.onReveal}>
-            Check My Work — show {sheets.checkKeys.map((k) => k.label).join(", ")}
+            Check My Work — show{" "}
+            {props.referenceChoice ? "the value key" : sheets.checkKeys.map((k) => k.label).join(", ")}
           </button>
         )}
-        {hasKey && props.revealed && (
+        {hasKey && props.revealed && props.referenceChoice && props.reference && (
+          <ValueKey src={props.referenceChoice.src} levels={props.reference.keyLevels} />
+        )}
+        {hasKey && props.revealed && sheets.checkKeys.length > 0 && (
           <div className="space-y-4">
             {sheets.checkKeys.map((k) => (
               <SheetFigure key={k.id} view={k} />

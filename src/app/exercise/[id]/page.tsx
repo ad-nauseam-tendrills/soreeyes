@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourse, getExercise, sectionOf } from "@/content/course-data";
 import { MATERIALS_BY_ID } from "@/content/materials";
-import { exerciseCitation, instructionCitation, resolveSheets } from "@/content/sheets";
+import { assetId, exerciseCitation, instructionCitation, resolveSheets } from "@/content/sheets";
 import { PracticeFlow, type PracticeProps, type ResolvedSheetViews } from "@/components/PracticeFlow";
 import { ERROR_LABELS, RATING_LABELS, STATUS_LABELS, TYPE_LABELS } from "@/lib/labels";
 import { formatDate, formatDuration, minutesLabel, numberLabel, relativeDays } from "@/lib/display";
@@ -101,6 +101,20 @@ export default async function ExercisePage({ params }: { params: Promise<{ id: s
     showTimer: state.settings.showTimer,
     parent: parent ? { id: parent.id, label: numberLabel(parent) } : undefined,
     supplementals: supps,
+    reference: e.reference
+      ? {
+          keyLevels: e.reference.keyLevels,
+          options: [
+            // Built-in reference photo(s) printed with the drill, then your uploads (newest first).
+            ...e.sheets.printSources
+              .filter((r) => r.book === "lref")
+              .map((r) => ({ id: assetId(r), label: r.label, src: `/api/asset/${assetId(r)}` })),
+            ...[...state.references]
+              .reverse()
+              .map((r) => ({ id: r.id, label: r.name, src: `/api/reference/${r.id}` })),
+          ],
+        }
+      : undefined,
   };
 
   return (

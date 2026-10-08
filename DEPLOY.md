@@ -89,6 +89,19 @@ ssh root@<droplet> 'chown -R 1000:1000 /var/lib/soreeyes/assets'
 PDF's page count, so a different edition is caught. The app's **Data** page tells you if any page
 file is missing.
 
+### Portrait Value images (Chelsea Lang demo + reference)
+
+These don't come from a PDF. They arrive as a ready-made zip, `soreeyes-portrait-assets.zip`, with
+`png/` and `pdf/` folders matching the layout above. Copy it into the same assets folder:
+
+```bash
+scp soreeyes-portrait-assets.zip root@<droplet>:/tmp/
+ssh root@<droplet> 'cd /var/lib/soreeyes/assets && unzip -o /tmp/soreeyes-portrait-assets.zip && chown -R 1000:1000 . && rm /tmp/soreeyes-portrait-assets.zip'
+```
+
+Your own extra references don't need this: upload them on the app's **References** page
+(stored in `/var/lib/soreeyes/data/references`).
+
 ## 4. First start and every update
 
 ```bash

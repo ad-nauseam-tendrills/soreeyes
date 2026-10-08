@@ -47,6 +47,7 @@ export function printPlan(
   };
 
   add(plan.current, "current");
+  plan.parallel.forEach((e) => add(e, "current"));
   plan.reviews.forEach((e) => add(e, "review"));
   plan.rework.slice(0, 3).forEach((e) => add(e, "rework"));
   add(plan.interleave, "revisit");

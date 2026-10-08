@@ -24,6 +24,9 @@ export const ERROR_LABELS: Record<ErrorCategory, string> = {
   "too-shallow": "Too shallow",
   "too-dark": "Too dark",
   "too-light": "Too light",
+  "small-shapes": "Small shapes too early",
+  "broken-shapes": "Big shapes broken up",
+  edges: "Edges",
   other: "Other",
 };
 
@@ -33,7 +36,7 @@ export const ERROR_GROUPS: { title: string; items: ErrorCategory[] }[] = [
   { title: "Size", items: ["too-large", "too-small"] },
   { title: "Placement", items: ["too-high", "too-low", "too-left", "too-right"] },
   { title: "Angle", items: ["too-steep", "too-shallow"] },
-  { title: "Value", items: ["too-dark", "too-light"] },
+  { title: "Value", items: ["too-dark", "too-light", "small-shapes", "broken-shapes", "edges"] },
   { title: "", items: ["other"] },
 ];
 

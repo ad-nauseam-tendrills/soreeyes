@@ -95,3 +95,28 @@ export async function deletePhoto(id: string): Promise<void> {
   if (!PHOTO_ID_RE.test(id)) return;
   await fs.rm(path.join(photoDir(), `${id}.jpg`), { force: true });
 }
+
+// ── uploaded reference photos ──
+
+export const referenceDir = () => path.join(dataDir(), "references");
+
+export async function saveReferenceFile(bytes: Buffer): Promise<string> {
+  const id = randomUUID();
+  await fs.mkdir(referenceDir(), { recursive: true });
+  await fs.writeFile(path.join(referenceDir(), `${id}.jpg`), bytes);
+  return id;
+}
+
+export async function readReferenceFile(id: string): Promise<Buffer | null> {
+  if (!PHOTO_ID_RE.test(id)) return null;
+  try {
+    return await fs.readFile(path.join(referenceDir(), `${id}.jpg`));
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteReferenceFile(id: string): Promise<void> {
+  if (!PHOTO_ID_RE.test(id)) return;
+  await fs.rm(path.join(referenceDir(), `${id}.jpg`), { force: true });
+}

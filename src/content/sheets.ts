@@ -3,11 +3,14 @@
 import { EXERCISES, sectionOf } from "@/content/course-data";
 import type { BookId, Exercise, ExerciseSheets, ScaleDirection, SheetRef } from "@/lib/types";
 
-export const BOOKS: Record<BookId, { title: string; short: string }> = {
-  aae: { title: "An Accurate Eye", short: "AAE" },
-  sup: { title: "An Accurate Eye Supplement", short: "Supplement" },
-  ceb: { title: "A Comparative Eye Course Book", short: "Course Book" },
-  cew: { title: "A Comparative Eye Workbook", short: "Workbook" },
+export const BOOKS: Record<BookId, { title: string; short: string; paged: boolean }> = {
+  aae: { title: "An Accurate Eye", short: "AAE", paged: true },
+  sup: { title: "An Accurate Eye Supplement", short: "Supplement", paged: true },
+  ceb: { title: "A Comparative Eye Course Book", short: "Course Book", paged: true },
+  cew: { title: "A Comparative Eye Workbook", short: "Workbook", paged: true },
+  // Image sets (no page numbers): numbered images, cited by label.
+  lang: { title: "Chelsea Lang, value module demo", short: "Lang demo", paged: false },
+  lref: { title: "Reference photo", short: "Reference", paged: false },
 };
 
 /** Stable id for one rendered page, e.g. "aae-p038". Also the asset file stem. */
@@ -15,7 +18,7 @@ export function assetId(s: Pick<SheetRef, "book" | "page">): string {
   return `${s.book}-p${String(s.page).padStart(3, "0")}`;
 }
 
-const ASSET_ID_RE = /^(aae|sup|ceb|cew)-p(\d{3})$/;
+const ASSET_ID_RE = /^(aae|sup|ceb|cew|lang|lref)-p(\d{3})$/;
 
 export function parseAssetId(id: string): { book: BookId; page: number } | null {
   const m = ASSET_ID_RE.exec(id);
@@ -42,11 +45,13 @@ export function formatPages(pages: number[]): string {
 
 /** "An Accurate Eye — Exercise 8, p.38" */
 export function sheetCitation(s: SheetRef): string {
-  return `${BOOKS[s.book].title}, ${s.label}, ${formatPages([s.page])}`;
+  const b = BOOKS[s.book];
+  return b.paged ? `${b.title}, ${s.label}, ${formatPages([s.page])}` : `${b.title} — ${s.label}`;
 }
 
 /** Headline attribution for an exercise, e.g. "An Accurate Eye — Exercise 8, p.38". */
 export function exerciseCitation(e: Exercise): string {
+  if (!BOOKS[e.instructionBook].paged) return `${BOOKS[e.instructionBook].title} — ${e.title}`;
   const pages = materialPages(e);
   const label =
     e.type === "supplemental"
@@ -65,6 +70,7 @@ export function exerciseCitation(e: Exercise): string {
 
 /** Instruction-page citation, e.g. "Instructions: A Comparative Eye — Course Book pp.25–26". */
 export function instructionCitation(e: Exercise): string {
+  if (!BOOKS[e.instructionBook].paged) return `${BOOKS[e.instructionBook].title} (course video)`;
   return `${BOOKS[e.instructionBook].title} ${formatPages(e.instructionPages)}`;
 }
 

@@ -8,7 +8,15 @@ import { MATERIALS_BY_ID } from "@/content/materials";
 import { STATUS_LABELS } from "@/lib/labels";
 import { AttemptSchema, validateImport } from "@/lib/portability";
 import { computeProgress } from "@/lib/progress/engine";
-import { deletePhoto, mutateState, readState, replaceState, savePhoto } from "@/lib/server/store";
+import {
+  deletePhoto,
+  deleteReferenceFile,
+  mutateState,
+  readState,
+  replaceState,
+  savePhoto,
+  saveReferenceFile,
+} from "@/lib/server/store";
 import type { Attempt, ExerciseStatus } from "@/lib/types";
 
 const MAX_PHOTO_BYTES = 6 * 1024 * 1024;
@@ -37,6 +45,9 @@ export async function saveAttempt(form: FormData): Promise<SaveAttemptResult> {
     errors: [...new Set(form.getAll("errors").map(String))],
     notes: String(form.get("notes") ?? "").trim(),
     ...(exercise.finalPair && (direction === "constrict" || direction === "dilate") ? { direction } : {}),
+    ...(exercise.reference && isKnownReference(String(form.get("referenceId") ?? ""), current.references)
+      ? { referenceId: String(form.get("referenceId")) }
+      : {}),
   };
   const parsed = AttemptSchema.safeParse(candidate);
   if (!parsed.success) return { ok: false, error: "Please choose how it went before saving." };
@@ -126,4 +137,36 @@ export async function applyImport(text: string): Promise<ImportPreview> {
   await replaceState(result.state); // previous state is kept in data/backups
   revalidatePath("/", "layout");
   return { ok: true, summary: result.summary, current: before };
+}
+
+// ── reference photos ──
+
+const MAX_REFERENCE_BYTES = 6 * 1024 * 1024;
+
+function isKnownReference(id: string, refs: { id: string }[]): boolean {
+  return (id.startsWith("lref-") && ALLOWED_ASSETS.has(id)) || refs.some((r) => r.id === id);
+}
+
+export type UploadReferenceResult = { ok: true; id: string } | { ok: false; error: string };
+
+export async function uploadReference(form: FormData): Promise<UploadReferenceResult> {
+  const file = form.get("file");
+  const name = String(form.get("name") ?? "").trim().slice(0, 120) || "Reference";
+  if (!(file instanceof File) || file.size === 0) return { ok: false, error: "Choose a photo first." };
+  if (file.type !== "image/jpeg") return { ok: false, error: "Photo must be a JPEG." };
+  if (file.size > MAX_REFERENCE_BYTES) return { ok: false, error: "Photo is too large." };
+  const id = await saveReferenceFile(Buffer.from(await file.arrayBuffer()));
+  await mutateState((s) => {
+    s.references.push({ id, name, addedAt: new Date().toISOString() });
+  });
+  revalidatePath("/", "layout");
+  return { ok: true, id };
+}
+
+export async function deleteReference(id: string): Promise<void> {
+  await mutateState((s) => {
+    s.references = s.references.filter((r) => r.id !== id);
+  });
+  await deleteReferenceFile(id);
+  revalidatePath("/", "layout");
 }

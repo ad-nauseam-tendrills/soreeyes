@@ -14,7 +14,7 @@ export default async function Dashboard() {
   const { state, progress, plan, now, timeZone } = await loadContext();
   const { current } = plan;
   const reworkShown = plan.rework.slice(0, 3);
-  const courses = (["aae", "ce"] as const).map((c) => courseProgress(c, progress));
+  const courses = (["aae", "ce", "pv"] as const).map((c) => courseProgress(c, progress));
   const proficientCount = [...progress.values()].filter(
     (p) => p.exercise.gating && PROFICIENT_STATUSES.includes(p.status),
   ).length;
@@ -48,6 +48,16 @@ export default async function Dashboard() {
             <div className="mt-2">
               <StatusTag status={progress.get(current.id)!.status} />
             </div>
+            {plan.parallel.map((e) => (
+              <p key={e.id} className="mt-6 text-sm">
+                <span className="eyebrow">Alongside</span>
+                <br />
+                <Link href={`/exercise/${e.id}`} className="font-serif text-lg">
+                  {getCourse(e.course)!.title} · {numberLabel(e)} — {e.title}
+                </Link>
+                <span className="text-pencil"> · {minutesLabel(e)}</span>
+              </p>
+            ))}
           </div>
         ) : (
           <div className="mt-6 text-center font-serif text-lg">
@@ -138,7 +148,7 @@ export default async function Dashboard() {
         </h2>
         <dl className="grid grid-cols-2 gap-y-3 text-sm text-graphite sm:grid-cols-4">
           {[
-            ["Current streak", `${currentStreak(state.attempts, now, timeZone)} days`],
+            ["Current streak", ((n) => `${n} ${n === 1 ? "day" : "days"}`)(currentStreak(state.attempts, now, timeZone))],
             ["Practice sessions", String(countSessions(state.attempts))],
             ["Minutes practiced", String(minutesPracticed(state.attempts))],
             ["Exercises proficient", String(proficientCount)],

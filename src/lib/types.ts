@@ -1,10 +1,13 @@
 // Shared domain types. Course content lives in src/content; progress is derived
 // from the attempt log in src/lib/progress.
 
-export type CourseId = "aae" | "ce";
+export type CourseId = "aae" | "ce" | "pv";
 
-/** The four owner-supplied PDFs. */
-export type BookId = "aae" | "sup" | "ceb" | "cew";
+/**
+ * Sources of private images: the four owner-supplied PDFs, plus non-paged image
+ * sets ("lang" = Chelsea Lang value-demo stages, "lref" = built-in reference photos).
+ */
+export type BookId = "aae" | "sup" | "ceb" | "cew" | "lang" | "lref";
 
 export type ExerciseType = "core" | "supplemental" | "mini" | "checkpoint";
 
@@ -84,6 +87,11 @@ export interface Exercise {
   parentId?: string;
   /** Target scale (CE): drawing size ÷ source size. */
   scale?: { factor: number; label: string };
+  /**
+   * Painting-from-a-reference drills: the attempt uses a reference photo (built-in or
+   * uploaded) and Check My Work reveals a value key generated from it.
+   */
+  reference?: { keyLevels: 2 | 3 };
   notes: string[];
 }
 
@@ -102,6 +110,8 @@ export interface Course {
   title: string;
   author: string;
   sections: Section[];
+  /** Practised alongside the others instead of unlocking after them. */
+  independent?: boolean;
 }
 
 export interface Material {
@@ -134,6 +144,9 @@ export const ERROR_CATEGORIES = [
   "too-shallow",
   "too-dark",
   "too-light",
+  "small-shapes",
+  "broken-shapes",
+  "edges",
   "other",
 ] as const;
 export type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
@@ -151,8 +164,17 @@ export interface Attempt {
   notes: string;
   /** Finals only. */
   direction?: ScaleDirection;
-  /** Stored photo id (private, owner-only). */
+  /** Stored photo id (private). */
   photoId?: string;
+  /** Reference painted from: an asset id ("lref-p001") or an uploaded reference id. */
+  referenceId?: string;
+}
+
+/** A reference photo uploaded through the References page. */
+export interface ReferenceImage {
+  id: string;
+  name: string;
+  addedAt: string;
 }
 
 export interface AppState {
@@ -162,6 +184,8 @@ export interface AppState {
   printed: Record<string, string>;
   /** materialId → have it. */
   materialsOwned: Record<string, boolean>;
+  /** Uploaded reference photos (files live in DATA_DIR/references). */
+  references: ReferenceImage[];
   settings: {
     showTimer: boolean;
     /** Max review items suggested per day. */

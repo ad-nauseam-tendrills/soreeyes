@@ -2,7 +2,7 @@
 // the attempt log — nothing derived is stored, so export/import and edits can
 // never leave states inconsistent with history.
 
-import { COURSES, EXERCISES, getExercise } from "@/content/course-data";
+import { COURSES, EXERCISES, getCourse, getExercise } from "@/content/course-data";
 import type { Attempt, CourseId, Exercise, ExerciseStatus, Rating } from "@/lib/types";
 
 // ── Tunables (one place; documented in README) ──────────────────────────────
@@ -106,7 +106,7 @@ export function sortAttempts(attempts: Attempt[]): Attempt[] {
 
 /** Whether the course is open. A Comparative Eye needs every AAE core exercise Proficient. */
 export function isCourseUnlocked(course: CourseId, replays: Map<string, Replay>): boolean {
-  if (course === "aae") return true;
+  if (course === "aae" || getCourse(course)?.independent) return true;
   return EXERCISES.filter((e) => e.course === "aae" && e.gating).every((e) => replays.get(e.id)?.everProficient);
 }
 
@@ -191,7 +191,7 @@ export const PROGRESS_WEIGHTS: Record<ExerciseStatus, number> = {
 export function courseProgress(course: CourseId, progress: Map<string, ExerciseProgress>): CourseProgress {
   const cores = EXERCISES.filter((e) => e.course === course && e.gating);
   const ps = cores.map((e) => progress.get(e.id)!);
-  const unlocked = course === "aae" || ps.some((p) => p.unlocked);
+  const unlocked = course === "aae" || Boolean(getCourse(course)?.independent) || ps.some((p) => p.unlocked);
   const weight = ps.reduce((sum, p) => sum + PROGRESS_WEIGHTS[p.status], 0);
   return {
     course,
@@ -212,6 +212,8 @@ export function courseProgress(course: CourseId, progress: Map<string, ExerciseP
 export interface TodayPlan {
   activeCourse: CourseId | null;
   current: Exercise | null;
+  /** Next exercise in each independent course (e.g. Portrait Value), practised alongside. */
+  parallel: Exercise[];
   reviews: Exercise[];
   reviewsDueTotal: number;
   rework: Exercise[];
@@ -229,10 +231,15 @@ export function todayPlan(
 ): TodayPlan {
   let activeCourse: CourseId | null = null;
   let current: Exercise | null = null;
-  for (const c of COURSES) {
-    const next = EXERCISES.find(
-      (e) => e.course === c.id && e.gating && progress.get(e.id)!.unlocked && !progress.get(e.id)!.everProficient,
+  const nextIn = (course: CourseId) =>
+    EXERCISES.find(
+      (e) => e.course === course && e.gating && progress.get(e.id)!.unlocked && !progress.get(e.id)!.everProficient,
     );
+  const parallel = COURSES.filter((c) => c.independent)
+    .map((c) => nextIn(c.id))
+    .filter((e): e is Exercise => Boolean(e));
+  for (const c of COURSES.filter((x) => !x.independent)) {
+    const next = nextIn(c.id);
     if (next) {
       activeCourse = c.id;
       current = next;
@@ -240,8 +247,9 @@ export function todayPlan(
     }
   }
 
+  const isPlanned = (id: string) => id === current?.id || parallel.some((e) => e.id === id);
   const due = EXERCISES.map((e) => progress.get(e.id)!)
-    .filter((p) => p.status === "REVIEW_DUE" && p.exercise.id !== current?.id)
+    .filter((p) => p.status === "REVIEW_DUE" && !isPlanned(p.exercise.id))
     .sort(
       (a, b) =>
         Number(b.exercise.type === "core") - Number(a.exercise.type === "core") ||
@@ -249,7 +257,7 @@ export function todayPlan(
     );
 
   const rework = EXERCISES.map((e) => progress.get(e.id)!)
-    .filter((p) => p.status === "NEEDS_REWORK" && p.exercise.id !== current?.id)
+    .filter((p) => p.status === "NEEDS_REWORK" && !isPlanned(p.exercise.id))
     .sort((a, b) => Date.parse(b.lastAttempt!.finishedAt) - Date.parse(a.lastAttempt!.finishedAt))
     .map((p) => p.exercise);
 
@@ -261,6 +269,7 @@ export function todayPlan(
   return {
     activeCourse,
     current,
+    parallel,
     reviews,
     reviewsDueTotal: due.length,
     rework,

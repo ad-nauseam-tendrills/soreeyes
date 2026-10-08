@@ -17,6 +17,10 @@ export const MATERIALS: Material[] = [
   { id: "pins", name: "Pins, tacks or tape (wall setup)", source: "AAE p.59" },
   { id: "printer", name: "Printer and copy paper", source: "AAE p.25; CEB p.20" },
   { id: "colored-pencil", name: "Colored pencil (red) for marking errors", source: "CEB p.20" },
+  { id: "oil-black", name: "Black oil paint (ivory black or your own mix)", source: "Chelsea Lang value demo" },
+  { id: "oil-white", name: "Titanium white oil paint", source: "Chelsea Lang value demo" },
+  { id: "canvas", name: "Canvas or scrap canvas", source: "Chelsea Lang value demo" },
+  { id: "brushes", name: "Brushes", source: "Chelsea Lang value demo" },
   {
     id: "proportional-divider",
     name: "Proportional divider — only to check a guess",

@@ -3,7 +3,7 @@ import { COURSES, EXERCISES, getExercise } from "@/content/course-data";
 import { MATERIALS_BY_ID } from "@/content/materials";
 import { assetId, exerciseCitation, requiredPrintSheets, resolveSheets } from "@/content/sheets";
 
-const PAGE_COUNTS = { aae: 92, sup: 43, ceb: 56, cew: 60 };
+const PAGE_COUNTS = { aae: 92, sup: 43, ceb: 56, cew: 60, lang: 6, lref: 1 };
 
 describe("course data integrity (mirrors COURSE_AUDIT.md)", () => {
   it("has the audited counts", () => {
@@ -13,6 +13,7 @@ describe("course data integrity (mirrors COURSE_AUDIT.md)", () => {
     expect(aae.filter((e) => e.type === "mini")).toHaveLength(5);
     expect(aae.filter((e) => e.type === "checkpoint")).toHaveLength(2);
     expect(EXERCISES.filter((e) => e.course === "ce")).toHaveLength(31);
+    expect(EXERCISES.filter((e) => e.course === "pv")).toHaveLength(4);
   });
 
   it("keeps the books' numbered order", () => {

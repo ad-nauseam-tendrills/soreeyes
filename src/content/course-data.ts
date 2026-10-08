@@ -330,6 +330,14 @@ export const COURSES: Course[] = [
       { id: "cd2", course: "ce", title: "Complex Dilation II", instructionBook: "ceb", instructionPages: range(48, 51) },
       { id: "final", course: "ce", title: "Final Exercises", instructionBook: "ceb", instructionPages: [52, 53] },
     ] satisfies Section[],
+  },  {
+    id: "pv",
+    title: "Portrait Value",
+    author: "Chelsea Lang's method (value module demo)",
+    independent: true,
+    sections: [
+      { id: "pv-value", course: "pv", title: "Value studies", instructionBook: "lang", instructionPages: [] },
+    ] satisfies Section[],
   },
 ];
 
@@ -1493,10 +1501,172 @@ FINAL_PAGES.forEach(([reduced, enlarged], i) => {
   });
 });
 
+
+// ───────────────────────────── Portrait Value (Chelsea Lang) ─────────────────────────────
+// Paraphrased from the owner's transcript of Chelsea Lang's value-module demo (her paid
+// course). Images: her demo stages ("lang") and the demo reference photo ("lref"),
+// supplied by the owner and kept private like the book pages. See COURSE_AUDIT.md → Course 3.
+
+const LANG_STAGES = [
+  sheet("lang", 1, "Stage 1 · two values: one average dark masked in on white canvas"),
+  sheet("lang", 2, "Stage 2 · two values: darks restated, light laid in as paint"),
+  sheet("lang", 3, "Stage 3 · a third value and the first softened edges"),
+  sheet("lang", 4, "Stage 4 · end of the first sitting"),
+  sheet("lang", 5, "Stage 5 · second session: flattening the over-rendered mouth"),
+  sheet("lang", 6, "Stage 6 · final"),
+];
+const DEMO_REFERENCE = sheet("lref", 1, "Demo reference photo");
+const PV_MATERIALS = ["oil-black", "oil-white", "canvas", "brushes"];
+const PV_KEY_CHECK = [
+  "Reveal the value key of your reference below and set it next to your study (or a photo of it).",
+  "Squint at both. Do your dark shapes match the key's in shape and placement?",
+  "Note the one error you're most confident about — that's where next attempt starts.",
+];
+
+function pv(
+  n: number,
+  o: Pick<Exercise, "title" | "summary" | "instructions" | "checkingInstructions" | "prerequisites" | "recommendedAttempts" | "masteryGuidance" | "notes"> & {
+    stages: SheetRef[];
+    minutes: [number, number];
+    keyLevels: 2 | 3;
+    gating?: boolean;
+  },
+): Exercise {
+  const sheets = noSheets();
+  sheets.display = o.stages;
+  sheets.printSources = [DEMO_REFERENCE];
+  return {
+    id: `pv-${String(n).padStart(2, "0")}`,
+    course: "pv",
+    sectionId: "pv-value",
+    title: o.title,
+    exerciseNumber: String(n),
+    type: "core",
+    book: "lang",
+    instructionBook: "lang",
+    instructionPages: [],
+    sheets,
+    estimatedMinutes: o.minutes,
+    materialIds: PV_MATERIALS,
+    summary: o.summary,
+    instructions: o.instructions,
+    checkingInstructions: o.checkingInstructions,
+    rotation: "none",
+    prerequisites: o.prerequisites,
+    prerequisiteMode: "proficient",
+    gating: o.gating ?? true,
+    recommendedAttempts: o.recommendedAttempts,
+    masteryGuidance: o.masteryGuidance,
+    supplementalExerciseIds: [],
+    reference: { keyLevels: o.keyLevels },
+    notes: o.notes,
+  };
+}
+
+const PV: Exercise[] = [
+  pv(1, {
+    title: "Two-value statement",
+    stages: [LANG_STAGES[0], LANG_STAGES[1]],
+    minutes: [20, 30],
+    keyLevels: 2,
+    prerequisites: [],
+    summary: "Get the whole head into two flat values — exposing for the lights — with precise drawing from the first stroke.",
+    instructions: [
+      "Opaque paint only: black (ivory black or your own mix) and titanium white. No transparent washes.",
+      "The white canvas is your light. Mix one average dark — the typical dark, not the very darkest — and mask in every important dark shape, flat.",
+      "Be precise about the drawing now: clean up the jaw, eye, nose and mouth shapes as you mask, rather than sneaking up on them later.",
+      "Decide where the midtones go: push them into the lights. Small creases beside the nose and mouth stay in the light.",
+      "Restate the darks with a truer darkest dark (black plus a touch of white). Lay the light in as paint — white with a little black; nothing on the face is pure white.",
+      "Squint and step back often. Stay in two values until the statement is clean — 20–30 minutes is fine.",
+    ],
+    checkingInstructions: [
+      ...PV_KEY_CHECK.slice(0, 2),
+      "Did any midtone end up in the shadows that belongs with the lights?",
+      "Do the shadow side, eye socket and hair read as one connected dark?",
+      PV_KEY_CHECK[2],
+    ],
+    recommendedAttempts: "Lots of them — short studies, a new reference whenever you can.",
+    masteryGuidance: "Her priority: be really happy with the two-value structure before adding any more values.",
+    notes: [
+      "This replaces her earlier transparent-oil demo; she no longer recommends working transparently for value studies.",
+      "Older male faces show the planes more clearly and are easier to start with without aging the subject.",
+    ],
+  }),
+  pv(2, {
+    title: "Two values → three, plus edges",
+    stages: [LANG_STAGES[2]],
+    minutes: [30, 45],
+    keyLevels: 3,
+    prerequisites: ["pv-01"],
+    summary: "Only once the two-value statement is right: add a third value, keep the shadows flat and start choosing edges.",
+    instructions: [
+      "Start exactly as Drill 1 and get the two-value statement right first.",
+      "Add a third value where it matters most — hers was the neck, between light and shadow.",
+      "Keep the shadows flat; put the nuance in the lights. A shadow must never get lighter than the darkest light, or a light darker than the lightest shadow.",
+      "Choose edges: look for shapes that are hard on one side and soft on the other (like the shadow beside the nose). Ask whether it's a cast shadow or a form shadow.",
+      "Progress methodically — 2 → 3 → 5 values, or 2 → 3 → nuance. Either is fine; be intentional.",
+    ],
+    checkingInstructions: [
+      "Reveal the three-value key of your reference and compare it with your study, squinting.",
+      "Are the shadows still one flat family, with the variation living in the lights?",
+      "Are edges hard where the form turns sharply and soft where it turns gradually?",
+      PV_KEY_CHECK[2],
+    ],
+    recommendedAttempts: "A few days of studies, until the third value goes in without breaking the two-value structure.",
+    masteryGuidance: "The extra value adds information without fragmenting the big light and shadow shapes.",
+    notes: [],
+  }),
+  pv(3, {
+    title: "One-sitting value study",
+    stages: [LANG_STAGES[3], LANG_STAGES[4], LANG_STAGES[5]],
+    minutes: [60, 90],
+    keyLevels: 3,
+    prerequisites: ["pv-02"],
+    summary: "The whole process in one sitting of about an hour: two values, a third, then nuance — keeping big shapes whole.",
+    instructions: [
+      "One sitting, about an hour (up to 90 minutes). It's practice, not a finished painting.",
+      "Two values → three → nuance, as in Drills 1–2.",
+      "Keep big shapes unified: the eye socket reads as one dark even with the brow, iris and lash line inside it.",
+      "Avoid small shapes — the line between the lips, eye glints, fine lines, wrinkles. They age the subject and cost time to undo (stage 5 shows her fixing exactly this).",
+      "Find the hierarchy of lights: which light is lightest? Careful with the jaw — painted too light, it looks like it flares out.",
+      "Simplify what isn't the focus (neck, hair as a mass). When something looks off, fix the error you're most confident about first.",
+    ],
+    checkingInstructions: [
+      "Reveal the value key (switch to grayscale too) and compare at a small size, squinting.",
+      "Do the big shapes read as unified — especially the eye socket and the lips?",
+      "Did any small shape creep in that hurts the likeness or ages the subject?",
+      "Is the face clearly the focal point, with the neck and hair simpler?",
+      PV_KEY_CHECK[2],
+    ],
+    recommendedAttempts: "Regularly. She'd rather you do many of these than a few long paintings.",
+    masteryGuidance: "A clear, unified value structure that reads at thumbnail size, finished in one sitting.",
+    notes: ["Stage 5 is her coming back a month later to undo over-rendering — a strong block-in avoids that."],
+  }),
+  pv(4, {
+    title: "25-minute value studies",
+    stages: [LANG_STAGES[1]],
+    minutes: [20, 30],
+    keyLevels: 2,
+    gating: false,
+    prerequisites: ["pv-01"],
+    summary: "Short, repeatable studies on scrap canvas: two values, a third only if time allows.",
+    instructions: [
+      "About 25 minutes per study, several to a sheet of scrap canvas.",
+      "Two values first, opaque black and white, exposing for the lights.",
+      "Add a third value only once the two-value statement is clean.",
+      "Use a different reference each time when you can.",
+    ],
+    checkingInstructions: PV_KEY_CHECK,
+    recommendedAttempts: "As often as you like — this is the regular-practice drill.",
+    masteryGuidance: "Speed comes from repetition; accuracy of the two-value statement is what counts.",
+    notes: ["She says every strong painter she knows owes their mastery to targeted value practice."],
+  }),
+];
+
 // ───────────────────────────── exports ─────────────────────────────
 
 /** All exercises in book order (supplementals after their sections' cores, as audited). */
-export const EXERCISES: Exercise[] = orderExercises([...AAE, ...CE]);
+export const EXERCISES: Exercise[] = orderExercises([...AAE, ...CE, ...PV]);
 
 function orderExercises(list: Exercise[]): Exercise[] {
   // Keep book order but place each supplemental immediately after its parent core.

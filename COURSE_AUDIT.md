@@ -247,6 +247,31 @@ CEB p.52 says "print all four Finals"; the app will show them in sequence but pr
 
 ---
 
+## Course 3 — Portrait Value (Chelsea Lang's method)
+
+Source: the owner's transcript of Chelsea Lang's value-module demo (from her paid course; the
+transcript has no timestamps), plus six screenshots of the demo stages and the demo's reference
+photo, all supplied by the owner and kept private like the book pages (`lang-p001…p006`,
+`lref-p001`; never in git). Instructions are paraphrased. This course is **independent**: it's
+open from the start and practised alongside An Accurate Eye, not after it.
+
+| ID | Drill | Demo stages shown | Value key at Check My Work | Prerequisite | Notes |
+|---|---|---|---|---|---|
+| pv-01 | Two-value statement | 1 (average dark masked in), 2 (darks restated, light as paint) | 2 values | — | Opaque black + titanium white only. Expose for the lights; no pure white on the face. Stay in two values until clean (20–30 min). |
+| pv-02 | Two values → three, plus edges | 3 (third value, first edges) | 3 values | pv-01 | Third value first where it matters (hers: the neck). Shadows flat, nuance in the lights. Hard/soft edges by form. |
+| pv-03 | One-sitting value study | 4 (end of first sitting), 5 (second-session rework of the mouth), 6 (final) | 3 values + grayscale | pv-02 | ~1 h (≤ 90 min). Keep big shapes whole (eye socket = one dark); avoid small shapes (lip line, glints, wrinkles); jaw too light reads as flaring; fix the most-confident error first. |
+| pv-04 | 25-minute value studies | 2 | 2 values | pv-01 | Repeatable regular-practice drill on scrap canvas; never blocks progress. |
+
+**Value key** (hidden until Check My Work): the chosen reference converted to luminance and split
+into two or three flat values with Otsu's threshold (adjustable; slide it darker to "expose for the
+lights"), or plain grayscale. Deterministic image maths, no ML.
+
+**References:** the demo reference is built in. More can be uploaded on the References page
+(stored in `DATA_DIR/references`), and each attempt records which reference it used.
+
+**Error categories added for this course:** Small shapes too early · Big shapes broken up · Edges
+(alongside Too dark / Too light).
+
 ## Print reuse ("save this sheet")
 
 | Sheet | First printed for | Reused by |
@@ -390,5 +415,9 @@ _Generated from `src/content/course-data.ts` — do not edit by hand (`npm run a
 | ce-f3 (dilate) | Final 3 | Course Book p.52 | Workbook p.55 | Workbook p.55 | — | Workbook p.56 | Workbook p.56 | — |
 | ce-f4 (constrict) | Final 4 | Course Book p.52 | Workbook p.58 | Workbook p.58 | — | Workbook p.57 | Workbook p.57 | — |
 | ce-f4 (dilate) | Final 4 | Course Book p.52 | Workbook p.57 | Workbook p.57 | — | Workbook p.58 | Workbook p.58 | — |
+| pv-01 | Drill 1 | Lang demo  | Lang demo pp.1–2 | Reference p.1 | — | — | — | — |
+| pv-02 | Drill 2 | Lang demo  | Lang demo p.3 | Reference p.1 | — | — | — | — |
+| pv-03 | Drill 3 | Lang demo  | Lang demo pp.4–6 | Reference p.1 | — | — | — | — |
+| pv-04 | Drill 4 | Lang demo  | Lang demo p.2 | Reference p.1 | — | — | — | — |
 
 <!-- asset-roles:end -->

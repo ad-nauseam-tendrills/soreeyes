@@ -3,6 +3,7 @@ import type { Exercise } from "@/lib/types";
 
 /** "Exercise 8", "Supplemental 3a", "Sight-Size Mini #2", "Final 1". */
 export function numberLabel(e: Exercise): string {
+  if (e.course === "pv") return `Drill ${e.exerciseNumber}`;
   switch (e.type) {
     case "supplemental":
       return `Supplemental ${e.exerciseNumber}`;
